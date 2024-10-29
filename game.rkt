@@ -112,6 +112,7 @@ Tipo =
 
 
 (define (game-set-end game)
+  (display game)
   (if (= (board-who-is-winner (list-ref game 2)) 0)
       (if (game-is-draw? game)
           (actualizar-ambos game)
@@ -125,7 +126,7 @@ Tipo =
   
 
 (define (actualizar-player game str)
-  (game-get-board game)
+  ;(game-get-board game)
   (if (string=? (list-ref (car game) 2) str)
       (list (player-update-stats (car game) "win")
             (player-update-stats (car (cdr game)) "loss")
@@ -138,14 +139,14 @@ Tipo =
       ))
 
 (define (actualizar-ambos game)
-  (game-get-board game)
+  ;(game-get-board game)
   (list (player-update-stats (car game) "draw")
         (player-update-stats (car (cdr game)) "draw")
         (list-ref game 2)
         (last game)))
 
 (define (no-actualiza game)
-  (game-get-board game)
+  ;(game-get-board game)
   (list (car game)
         (car (cdr game))
         (list-ref game 2)
@@ -173,9 +174,9 @@ Tipo =
                               (list-ref game 2)
                               (last game)))
           (game-set-end (list (ver-si-juega-p1 game player)
-                          (ver-si-juega-p2 game player )
-                          (actualizar-game game player columna)
-                          (last game)))
+                              (ver-si-juega-p2 game player)
+                              (actualizar-game game player columna)
+                              (last game)))
           ) ;si es el correcto comienza a actualizar el juego
       game                                    ;si no es el correcto da el mensaje por consola y devuelve el mismo game ya que esta función solo retorna games
       ))
