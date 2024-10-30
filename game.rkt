@@ -2,7 +2,7 @@
 
 (require "board.rkt")
 (require "tda_player.rkt")
-(require "pieces.rkt")
+(require "tda_pieces.rkt")
 (provide game)
 (provide game-is-draw?)
 (provide game-get-current-player)
@@ -27,6 +27,25 @@ Tipo = constructor
 
 (define (game player1 player2 board nturno)
   (list player1 player2 board nturno))
+
+#|
+Función = game-is-draw?
+
+Propósito = Función que verifica si el estado actual del juego es empate.
+
+Dominio = game (game)
+
+Recorrido = boolean (#t si es empate, #f si no)
+
+Recursión = no aplica
+
+Tipo = otros
+|#
+
+(define (game-history game columna)
+  #t)
+(define historial '())
+
 
 #|
 Función = game-is-draw?
@@ -97,17 +116,17 @@ Tipo = selector
   (displayln (list-ref game 2)))
 
 #|
-Función = 
+Función = game-set-end
 
-Propósito = 
+Propósito = Función finaliza el juego actualizando las estadísticas de los jugadores según el resultado.
 
-Dominio = 
+Dominio = Game (game)
 
-Recorrido = 
+Recorrido = game
 
-Recursión = 
+Recursión = de cola
 
-Tipo = 
+Tipo = modificador
 |#
 
 
@@ -153,17 +172,17 @@ Tipo =
         (+ (last game) 1)))
 
 #|
-Función = 
+Función = game-player-set-move
 
-Propósito = 
+Propósito = Función que realiza un movimiento.
 
-Dominio = 
+Dominio = game (game) X player (player) X column (int) 
 
-Recorrido = 
+Recorrido = game 
 
-Recursión = 
+Recursión = cola
 
-Tipo = 
+Tipo = modificador
 |#
 
 (define (game-player-set-move game player columna)

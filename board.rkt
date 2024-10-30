@@ -1,5 +1,5 @@
 #lang racket
-(require "pieces.rkt")
+(require "tda_pieces.rkt")
 (provide board)
 (provide board-can-play?)
 (provide board-set-play-piece)
