@@ -1,5 +1,5 @@
 #lang racket
-(require "tda_pieces.rkt")
+(require "piece_21484373_MatiasRamirezEscobar.rkt")
 (provide board)
 (provide board-can-play?)
 (provide board-set-play-piece)
@@ -33,7 +33,7 @@ Tipo = constructor
 #|
 Función = board-can-play?
 
-Propósito = verificar si se puede hacer una jugada
+Propósito = Función que permite verificar si se puede realizar más jugadas en el tablero.
 
 Dominio = board(board)
 
@@ -47,10 +47,10 @@ Tipo = otros
 (define (board-can-play? board)
   (cond
     [(empty? board)#f]
-    [(revisar-fila (car board)) #t]
+    [(revisar-fila (car board)) #t];si hay algun lugar vacio aun se puede jugar
     [else #f]))
 
-(define (revisar-fila lista2)
+(define (revisar-fila lista2);recorre cada fila interior y usa recursion natural
   (cond
    [(empty? lista2)#f]
    [(null? (car lista2)) #t]
@@ -109,12 +109,12 @@ Tipo = otros
       [(empty? fila)
        (revisar-fila tablero (list-ref tablero (+ 1 nfila)) 0 (+ 1 nfila))]
       [(null? (car fila)) (revisar-fila tablero (cdr fila) (+ col 1) nfila)]
-      [(encontrov tablero nfila col 0 "R") 1]
-      [(encontrov tablero nfila col 0 "Y") 2]
+      [(encontrov tablero nfila col 0 "R") 1];si encuentra cierta ficha llama a la funcion que revisa
+      [(encontrov tablero nfila col 0 "Y") 2];las posiciones siguientes hacia abajo
       [else (revisar-fila tablero (cdr fila) (+ col 1) nfila)]))
   (revisar-fila tablero (list-ref tablero 0) 0 0))
 
-(define (encontrov tablero n-fila n-col cont x)
+(define (encontrov tablero n-fila n-col cont x);revisa las posiciones hacia abajo
   (cond
     [(= cont 4) #t]
     [(and (and (= n-fila 5) (= cont 3)) (string=? (list-ref (list-ref (list-ref tablero n-fila) n-col) 0) x))
@@ -134,7 +134,7 @@ el posible ganador que cumple con la regla de conectar 4 fichas de forma horizon
 
 Dominio = board (board)
 
-Recorrido = int (1 si gana jugador 1, 2 si gana jugador 2, 0 si no hay ganador vertical)
+Recorrido = int (1 si gana jugador 1, 2 si gana jugador 2, 0 si no hay ganador horizontal)
 
 Recursión = natural
 
@@ -151,14 +151,14 @@ Tipo = otros
              )
          (cond
            [(null? (car fila)) (revisar-fila tablero (cdr fila) nfila (+ col 1))]
-           [(encontroh tablero nfila col 0 "R") 1]
-           [(encontroh tablero nfila col 0 "Y") 2]
+           [(encontroh tablero nfila col 0 "R") 1];si encuentra una ficha llama a la funcion que 
+           [(encontroh tablero nfila col 0 "Y") 2];revisa las posiciones de al lado 
            [else (revisar-fila tablero (cdr fila) nfila (+ col 1))]
            )
          ))
   (revisar-fila tablero (list-ref tablero 0) 0 0))
 
-(define (encontroh tablero fila col cont x)
+(define (encontroh tablero fila col cont x);revisa las posiciones de al lado hacia la derecha siempre
   (cond
     [(= cont 4) #t]
     [(null? (list-ref (list-ref tablero fila) col)) #f]
@@ -177,7 +177,7 @@ el posible ganador que cumple con la regla de conectar 4 fichas de forma diagona
 
 Dominio = board (board)
 
-Recorrido = int (1 si gana jugador 1, 2 si gana jugador 2, 0 si no hay ganador vertical)
+Recorrido = int (1 si gana jugador 1, 2 si gana jugador 2, 0 si no hay ganador diagonal)
 
 Recursión = natural
 
@@ -193,8 +193,8 @@ Tipo = otros
         (cond
           [(null? (list-ref (list-ref tablero fila) col))
            (recorre-fila tablero fila (+ col 1))]
-          [(encontro-d tablero fila col "R") 1]
-          [(encontro-d tablero fila col "Y") 2]
+          [(encontro-d tablero fila col "R") 1];llama a la funcion para revisar si gano
+          [(encontro-d tablero fila col "Y") 2];segun la ficha que encuentra
           [else (recorre-fila tablero fila (+ col 1))]
       )
     )
@@ -211,13 +211,13 @@ Tipo = otros
 
 (define (fn-verificar tablero fila col x)
   (cond
-    [(ver-der tablero fila col x 0) #t]
-    [(ver-iz tablero fila col x 0) #t]
+    [(ver-der tablero fila col x 0) #t];verifica la diagonal de abajo a la derecha
+    [(ver-iz tablero fila col x 0) #t];verifica la diagonal de abajo a la izquierda
     [else #f]
     )
   )
 
-(define (ver-der tablero fila col x cont)
+(define (ver-der tablero fila col x cont);verifica abajo derecha
   (if (= cont 4)
       #t
       (if (or (= fila -1) (= fila 6) (= col -1) (= col 7))
@@ -232,7 +232,7 @@ Tipo = otros
       )
   )
 
-(define (ver-iz tablero fila col x cont)
+(define (ver-iz tablero fila col x cont);verifica abajo izquierda
   (if (= cont 4)
       #t
       (if (or (= fila -1) (= fila 6) (= col -1) (= col 7))
@@ -262,7 +262,7 @@ Recursión = no aplica
 Tipo = otros
 |#
 
-(define (board-who-is-winner board)
+(define (board-who-is-winner board);llama siempre a todas las verificaciones de victoria para cubrir todos los casos
   (cond
     [(and (= (board-check-diagonal-win board) 0)
           (= (board-check-horizontal-win board) 0)

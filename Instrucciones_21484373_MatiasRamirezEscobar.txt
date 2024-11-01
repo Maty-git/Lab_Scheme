@@ -1,0 +1,79 @@
+Instrucciones de Uso para Jugar "Conecta4"
+Para comenzar una partida de "Conecta4", sigue estos pasos:
+
+1. Crear Jugadores: Define a los jugadores especificando su color (rojo o amarillo) y otros atributos:
+                      (define p1 (player 1 "Juan" "red" 0 0 0 10))
+	      (define p2 (player 2 "Mauricio" "yellow" 0 0 0 10))
+
+Nota: Las piezas se generan automáticamente al iniciar el juego y solo se permite el 
+uso de fichas "red" y "yellow".
+
+2. Crear el Tablero: Inicia un tablero vacío:
+(define empty-board (board))
+
+3. Crear una Nueva Partida: Inicia una partida entre dos jugadores:
+(define g0 (game p1 p2 empty-board 1))
+
+Luego de estos pasos, los jugadores pueden comenzar a jugar.
+
+4. Jugar en el Tablero: Para colocar una ficha y actualizar el estado del juego:
+(define g1 (game-player-set-move g0 p1 1))  ; Ejemplo: Juan coloca ficha en la columna 1
+Continúa con g1, g2, g3, etc., cada vez que un jugador coloque una ficha.
+
+(define g1 (game-player-set-move g0 p1 1))  ; Juan coloca en columna 1
+(define g2 (game-player-set-move g1 p2 2))  ; Mauricio coloca en columna 2
+(define g3 (game-player-set-move g2 p1 2))  ; Juan coloca en columna 2
+(define g4 (game-player-set-move g3 p2 3))  ; Mauricio coloca en columna 3
+(define g5 (game-player-set-move g4 p1 3))  ; Juan coloca en columna 3
+(define g6 (game-player-set-move g5 p2 4))  ; Mauricio coloca en columna 4
+(define g7 (game-player-set-move g6 p1 3))  ; Juan coloca en columna 3
+(define g8 (game-player-set-move g7 p2 4))  ; Mauricio coloca en columna 4
+(define g9 (game-player-set-move g8 p1 4))  ; Juan coloca en columna 4
+(define g10 (game-player-set-move g9 p2 1)) ; Mauricio coloca en columna 1
+(define g11 (game-player-set-move g10 p1 4)) ; Juan coloca en columna 4 (victoria diagonal)
+
+
+
+5. Finalización: Al detectar una victoria o empate, la consola mostrará el resultado. 
+El juego se bloqueará automáticamente para evitar más jugadas, y se finalizará la 
+partida mostrando el historial y actualizando las estadísticas de los jugadores.
+
+(display "Historial de movimientos: ")
+(game-history ended-game)
+
+
+Errores Comunes:
+
+	Solo se aceptan colores "red" y "yellow" para las fichas.
+	Aunque puedes crear múltiples jugadores, solo dos pueden participar en 
+	      una partida a la vez; los demás pueden usarse en otras partidas.
+
+
+Ejemplo Completo de una Partida
+
+; 1. Creación de jugadores (10 fichas cada uno para un juego corto)
+(define p1 (player 1 "Juan" "red" 0 0 0 10))
+(define p2 (player 2 "Mauricio" "yellow" 0 0 0 10))
+
+; 2. Creación del tablero inicial
+(define empty-board (board))
+
+; 3. Creación de un nuevo juego
+(define g0 (game p1 p2 empty-board 1))
+
+; 4. Realizando movimientos para crear una victoria diagonal
+(define g1 (game-player-set-move g0 p1 1))  ; Juan coloca en columna 1
+(define g2 (game-player-set-move g1 p2 2))  ; Mauricio coloca en columna 2
+(define g3 (game-player-set-move g2 p1 2))  ; Juan coloca en columna 2
+(define g4 (game-player-set-move g3 p2 3))  ; Mauricio coloca en columna 3
+(define g5 (game-player-set-move g4 p1 3))  ; Juan coloca en columna 3
+(define g6 (game-player-set-move g5 p2 4))  ; Mauricio coloca en columna 4
+(define g7 (game-player-set-move g6 p1 3))  ; Juan coloca en columna 3
+(define g8 (game-player-set-move g7 p2 4))  ; Mauricio coloca en columna 4
+(define g9 (game-player-set-move g8 p1 4))  ; Juan coloca en columna 4
+(define g10 (game-player-set-move g9 p2 1)) ; Mauricio coloca en columna 1
+(define g11 (game-player-set-move g10 p1 4)) ; Juan coloca en columna 4 (victoria diagonal)
+
+; 5. Mostrar historial de movimientos
+(display "Historial de movimientos: ")
+(game-history g11 )

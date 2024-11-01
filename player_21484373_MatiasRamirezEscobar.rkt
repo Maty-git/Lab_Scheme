@@ -7,7 +7,7 @@
 #|
 Función = player
 
-Propósito = crear una lista que represente los atributos del jugador
+Propósito = Función que permite crear un jugador.
 
 Dominio =
 id (numero que identifica al jugador)(número entero) x 
@@ -32,11 +32,11 @@ Tipo = Constructor
 #|
 Función = player-update-stats
 
-Propósito = actualizar estadisticas de un jugador
+Propósito = Función que actualiza las estadísticas del jugador, ya sea victoria, derrotas o empates.
 
-Dominio = player x result(string)
+Dominio = player x result(string: "win", "loss", o "draw")
 
-Recorrido = player (player) X result (string: "win", "loss", o "draw")
+Recorrido = player
 
 Recursión = no aplica
 
@@ -51,7 +51,7 @@ Tipo = Otros
     ))
 
 
-(define (sumar1 n player)
+(define (sumar1 n player);suma uno segun la posicion que se asigno segun si pierde gana o empata
   (if (= n 0)
       (cons (+ (car player) 1) (cdr player))
       (cons (car player) (sumar1 (- n 1) (cdr player)))

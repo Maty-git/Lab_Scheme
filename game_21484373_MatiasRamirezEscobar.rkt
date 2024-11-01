@@ -1,14 +1,15 @@
 #lang racket
 
-(require "board.rkt")
-(require "tda_player.rkt")
-(require "tda_pieces.rkt")
+(require "player_21484373_MatiasRamirezEscobar.rkt");importa el player
+(require "piece_21484373_MatiasRamirezEscobar.rkt");importa la pieza
+(require "board_21484373_MatiasRamirezEscobar.rkt")
 (provide game)
 (provide game-is-draw?)
 (provide game-get-current-player)
 (provide game-get-board)
 (provide game-set-end)
 (provide game-player-set-move)
+(provide game-history)
 
 
 #|
@@ -26,10 +27,10 @@ Tipo = constructor
 |#
 
 (define (game player1 player2 board nturno)
-  (list player1 player2 board nturno))
+  (list player1 player2 board nturno (list null)))
 
 #|
-Función = game-is-draw?
+Función = game-history
 
 Propósito = Función que verifica si el estado actual del juego es empate.
 
@@ -42,9 +43,20 @@ Recursión = no aplica
 Tipo = otros
 |#
 
-(define (game-history game columna)
-  #t)
-(define historial '())
+(define (game-history game)
+  (if (not (= (board-who-is-winner (list-ref game 2)) 0))
+      (cdr (last game))
+      (update-history game (last game))
+      ))
+(define (update-history game columna)
+  (append  (list-ref game 4) (list (cons columna (saber-color (game-get-current-player game)))))
+  )
+
+(define (saber-color player)
+  (if (string=? (list-ref player 2) "red")
+      "red"
+      "yellow"
+      ))
 
 
 #|
@@ -93,7 +105,7 @@ Tipo = selector
 
 
 (define (game-get-current-player game)
-  (if (= (modulo (last game) 2) 0)
+  (if (= (modulo (list-ref game 3) 2) 0)
       (list-ref game 1)
       (list-ref game 0)
       ))
@@ -113,7 +125,7 @@ Tipo = selector
 |#
 
 (define (game-get-board game)
-  (displayln (list-ref game 2)))
+  (list-ref game 2))
 
 #|
 Función = game-set-end
@@ -131,7 +143,7 @@ Tipo = modificador
 
 
 (define (game-set-end game)
-  (display game)
+  
   (if (= (board-who-is-winner (list-ref game 2)) 0)
       (if (game-is-draw? game)
           (actualizar-ambos game)
@@ -144,32 +156,33 @@ Tipo = modificador
   )
   
 
-(define (actualizar-player game str)
-  ;(game-get-board game)
+(define (actualizar-player game str);segun quien gana devuelve un game con los jugadores actualizados
   (if (string=? (list-ref (car game) 2) str)
-      (list (player-update-stats (car game) "win")
+      (list (player-update-stats (car game) "win");si el primero gana
             (player-update-stats (car (cdr game)) "loss")
             (list-ref game 2)
-            (last game))
-      (list (player-update-stats (car game) "loss")
+            (list-ref game 3)
+            (list-ref game 4))
+      (list (player-update-stats (car game) "loss");si el primero pierde
             (player-update-stats (car (cdr game)) "win")
             (list-ref game 2)
-            (last game))
+            (list-ref game 3)
+            (list-ref game 4))
       ))
 
-(define (actualizar-ambos game)
-  ;(game-get-board game)
+(define (actualizar-ambos game);se actualizan si empatan
   (list (player-update-stats (car game) "draw")
         (player-update-stats (car (cdr game)) "draw")
         (list-ref game 2)
-        (last game)))
+        (list-ref game 3)
+        (list-ref game 4)))
 
-(define (no-actualiza game)
-  ;(game-get-board game)
+(define (no-actualiza game);aun no hay ni ganador ni empate devuelve el mismo game
   (list (car game)
         (car (cdr game))
         (list-ref game 2)
-        (+ (last game) 1)))
+        (+ (list-ref game 3) 1)
+        (list-ref game 4)))
 
 #|
 Función = game-player-set-move
@@ -186,19 +199,40 @@ Tipo = modificador
 |#
 
 (define (game-player-set-move game player columna)
-  (if (= (car (game-get-current-player game)) (car player)) ;verifica si el jugador es el correcto
-      (if (= (last (game-get-current-player game)) 0)
-          (game-set-end (list (car game)
-                              (car (cdr game))
-                              (list-ref game 2)
-                              (last game)))
-          (game-set-end (list (ver-si-juega-p1 game player)
-                              (ver-si-juega-p2 game player)
-                              (actualizar-game game player columna)
-                              (last game)))
-          ) ;si es el correcto comienza a actualizar el juego
-      game                                    ;si no es el correcto da el mensaje por consola y devuelve el mismo game ya que esta función solo retorna games
-      ))
+  (if (and (= (board-who-is-winner (list-ref game 2)) 0) (not(game-is-draw? game)))
+      (if (= (car (game-get-current-player game)) (car player)) ;verifica si el jugador es el correcto
+          (if (= (last (game-get-current-player game)) 0)     ;verifica si le quedan piezaz
+              (game-set-end (list (car game)                   ;devuelve el mismo game
+                                  (car (cdr game))
+                                  (list-ref game 2)
+                                  (list-ref game 3)
+                                  (last game)
+                                  ))
+              (game-set-end (list (ver-si-juega-p1 game player)  ;actualiza el game entero
+                                  (ver-si-juega-p2 game player)
+                                  (actualizar-game game player columna)
+                                  (list-ref game 3)
+                                  (game-history (append game (list columna)))
+                                  ))
+              ) ;si es el correcto comienza a actualizar el juego
+          (no-es-el-player game)                                    ;si no es el correcto da el mensaje por consola y devuelve el mismo game ya que esta función solo retorna games
+          )
+      (ya-ganaron game)
+      )
+  )
+
+(define (ya-ganaron game);se quiere jugar pero ya hay un ganador en el game anterior
+  (displayln "no se puede seguir jugando alguien ya gano o empataron")
+  (displayln (car game))
+  (displayln (car (cdr game)))
+  (displayln (caddr game))
+  )
+
+(define (no-es-el-player game);si el jugador indicado no le corresponde jugar
+  (displayln "a este jugador no le corresponde jugar")
+  game
+  )
+
 
 (define (ver-si-juega-p1 game player )
   (if (= (car (first game)) (car player))
@@ -221,10 +255,10 @@ Tipo = modificador
 (define (actualizar-game game player columna)
   (if (board-can-play? (list-ref game 2)) ;verifica si se puede jugar en el board
       (board-set-play-piece (list-ref game 2) columna (elegir-pieza player)) ;si se puede va a poner una ficha
-      (list-ref game 2)                                                                ;si no se puede devuelve el mismo board
+      (list-ref game 2)                                    ;si no se puede devuelve el mismo board
       ))
 
-(define (elegir-pieza player)
+(define (elegir-pieza player);se crean las piezas cada vez que se va a jugar 
   (if (string=? (list-ref player 2) "red")
       (piece "red")
       (piece "yellow")

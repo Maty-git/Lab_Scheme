@@ -1,0 +1,38 @@
+INSTRUCCIONES:
+-Primeramente se deben crear los jugadores :
+(define "jugador"(player ID "NAME" "COLOR" WINS LOSSES DRAWS PIEZAS)
+ejemplo: (define p1 (player 1 "juan" "rojo" 0 0 0 21))
+               (define p2 (player 1 "matias" "yellow" 0 0 0 21))
+
+-Se crea un tablero vacio:
+(define empty-board (board))
+
+-Para crear una nueva partida usted debe haber definido el color de las piezas, ambos jugadores y un tablero vacio:
+(define "nombre-partida"(jugador1 jugador2 tablero 1))
+ejemplo: (define G1(p1 p2 tablero-vacio 1))
+
+-Para poner una ficha en el tablero DE UNA PARTIDA debe:
+(define "juegoActualizado"(game-player-set-move "juegoActual" jugador columna)) Las columnas van de 1 a 7
+ejemplo: (define G2(game-player-set-move G1 p1 1))
+
+-Para mostrar el jugador siguiente al turno actual de la partida usted debe:
+(game-get-current-player "partidaActual")
+
+-Para verificar si una partida es empate:
+(game-is-draw? "nombrePartida")
+
+-Para mostrar el jugador siguiente al turno actual de la partida:
+en caso de que ya termino el juego mostrará el jugador que hizo el ultimo movimiento
+que es el mismo que gano
+(game-get-current-player "partidaActual")
+
+-Para mostrar el tablero de la partida:
+(game-get-board "partidaActual")
+.
+-Para revisar el historial DE UNA PARTIDA FINALIZADA:
+(game-history "juegoFinalizado")
+ejemplo: (game-history ended-game)
+
+Se aclara que no es recomendable usar funciones modificadoras ademas de la funcion
+que crea una pieza, ya que por ejemplo game-set-end ya actua y actualiza las estadisticas 
+de los jugadores en caso de que gane o empaten si se usa por fuera puede traer errores.
